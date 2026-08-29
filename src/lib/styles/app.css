@@ -1,0 +1,36 @@
+/* source('../../') scopes Tailwind's class scanning to src/ — without it the
+   utility names written in docs/*.md are detected and emitted into the bundle. */
+@import 'tailwindcss' source('../../');
+@import './variables.css';
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+.placeholder {
+	display: block;
+	width: 100%;
+	min-height: 4rem;
+	background-color: #ebebeb;
+}

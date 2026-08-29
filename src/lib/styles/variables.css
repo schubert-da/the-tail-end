@@ -1,0 +1,19 @@
+@theme static {
+	/* Typeface — Helvetica as a web-safe system font: nothing is downloaded, so
+	   there is no FOUT to manage. Windows falls back to Arial, which is
+	   metric-compatible, so measure and line breaks hold. Swap this for a
+	   project typeface by adding @font-face rules and repointing --font-sans. */
+	--font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+	/* Colors */
+	--color-primary: #fc341e;
+	--color-primary-400: #fc5543;
+	--color-primary-300: #fc6b5b;
+	--color-primary-250: #fc7667;
+	--color-primary-200: #fc8073;
+	--color-primary-150: #fc968a;
+	--color-primary-100: #fdb7af;
+	--color-secondary: #ffbe00;
+	--color-locked: #141414;
+	--color-dark-bg: #1e1e1e;
+}

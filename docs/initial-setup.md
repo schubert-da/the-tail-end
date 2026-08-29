@@ -52,6 +52,7 @@ src/
 ### `src/lib/styles/app.css`
 
 - Imports Tailwind CSS and `variables.css`
+- Scopes Tailwind's class scanning to `src/` with `@import 'tailwindcss' source('../../')`. Automatic detection otherwise starts at the repo root, so utility names written in prose — the token table in this file, for instance — get compiled into the production bundle.
 - CSS resets: `box-sizing: border-box`, zero margin/padding, font smoothing
 - Sets the base font on `body` from the `--font-sans` token
 - Media elements (`img`, `picture`, `video`, `svg`) set to `display: block` and `max-width: 100%`
@@ -62,6 +63,7 @@ src/
 - Typeface: **Helvetica**, as a web-safe system font — nothing downloaded, no `@font-face`, no font dependency. `--font-sans` is set to `"Helvetica Neue", Helvetica, Arial, sans-serif`: macOS and iOS resolve Helvetica Neue, Windows falls back to Arial (metric-compatible, so measure and line breaks hold), and `sans-serif` catches everything else. Because nothing is fetched at runtime there is no FOUT to manage and no `font-display` to tune.
 - **Helvetica is the placeholder default — swap it for whatever the project actually calls for.** To do that: create `src/lib/assets/fonts/`, drop the font files in, add one `@font-face` declaration per weight (each with `font-display: swap`), and point `--font-sans` at the new family name. Nothing downstream needs touching — `app.css` and the Tailwind `font-sans` utility both read the token, not the family.
 - The font family is registered as `--font-sans` inside `@theme`, so it is reachable as `var(--font-sans)` and as Tailwind's `font-sans` utility.
+- Tokens are declared in **`@theme static`**, not plain `@theme`. Plain `@theme` emits only the variables some generated utility actually uses, so a token referenced solely as `var(--color-locked)` in a component's `<style>` block resolves to nothing. `static` emits all of them to `:root`.
 - Color tokens registered via Tailwind v4 `@theme` directive (usable as both CSS variables and Tailwind utilities like `bg-primary`, `text-secondary`, etc.):
 
 | Token                 | Value     | Tailwind class example |
@@ -85,7 +87,7 @@ src/
 
 ## Prettier Configuration
 
-Update `tailwindStylesheet` in `.prettierrc` to point to your actual CSS entrypoint (e.g. `./src/lib/styles/app.css`) — an incorrect path silently breaks format-on-save.
+Update `tailwindStylesheet` in `prettier.config.js` to point to your actual CSS entrypoint (`./src/lib/styles/app.css`) — an incorrect path silently breaks class sorting on save.
 
 In `.vscode/settings.json`, set the default formatter for Svelte files to `esbenp.prettier-vscode` (not `svelte.svelte-vscode`) — the Svelte extension uses its own bundled prettier which ignores project plugins:
 

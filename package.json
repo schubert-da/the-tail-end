@@ -23,5 +23,11 @@
 		"svelte": "^5.56.1",
 		"tailwindcss": "^4.3.0",
 		"vite": "^8.0.16"
+	},
+	"dependencies": {
+		"@lucide/svelte": "0.544.0",
+		"@sveltejs/svelte-scroller": "2.0.7",
+		"d3": "7.9.0",
+		"gsap": "3.14.2"
 	}
 }
