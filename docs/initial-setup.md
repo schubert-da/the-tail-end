@@ -53,10 +53,10 @@ src/
 
 - Imports Tailwind CSS and `variables.css`
 - Scopes Tailwind's class scanning to `src/` with `@import 'tailwindcss' source('../../')`. Automatic detection otherwise starts at the repo root, so utility names written in prose — the token table in this file, for instance — get compiled into the production bundle.
-- CSS resets: `box-sizing: border-box`, zero margin/padding, font smoothing
+- CSS resets — `box-sizing: border-box`, zero margin/padding, font smoothing — all wrapped in `@layer base`. **This is not cosmetic.** An unlayered rule beats a layered one regardless of specificity, and Tailwind emits its utilities inside `@layer utilities`, so a top-level `* { margin: 0; padding: 0 }` silently overrides every `m-*` and `p-*` utility in the project. `mx-auto` stops centring and padding utilities do nothing, with no error anywhere — the symptom is a page pinned to the left with no padding.
 - Sets the base font on `body` from the `--font-sans` token
 - Media elements (`img`, `picture`, `video`, `svg`) set to `display: block` and `max-width: 100%`
-- `.placeholder` utility class — creates a placeholder block element with a light grey background
+- `.placeholder` utility class — creates a placeholder block element with a light grey background. Declared in `@layer components` for the same reason, so utilities still override it and `class="placeholder bg-primary"` comes out red rather than grey.
 
 ### `src/lib/styles/variables.css`
 
@@ -96,6 +96,31 @@ In `.vscode/settings.json`, set the default formatter for Svelte files to `esben
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
 ```
+
+### Format-on-save silently dies on `.css` files
+
+The scaffold ships this, and Tailwind's own docs recommend it — it enables Tailwind IntelliSense in stylesheets and stops the built-in CSS validator flagging v4 at-rules (`@theme`, `@source`, `@apply`) as unknown:
+
+```json
+"files.associations": { "*.css": "tailwindcss" }
+```
+
+The catch: `tailwindcss` is a **separate language id** contributed by `bradlc.vscode-tailwindcss`, and `esbenp.prettier-vscode` registers its formatter against a fixed list of language ids that does not include it — the string `tailwindcss` does not appear anywhere in the extension's bundle. Reassociating `*.css` therefore leaves VS Code with no formatter registered for stylesheets, and format-on-save quietly stops doing anything.
+
+Nothing surfaces the breakage. `pnpm format` and `pnpm lint` both keep working, because the CLI dispatches on **file extension** while the editor dispatches on **language id** — so CI stays green while saves in the editor no longer format.
+
+The fix is `prettier.documentSelectors`, which registers the formatter by path instead of by language:
+
+```json
+"prettier.documentSelectors": ["**/*.css"],
+"[tailwindcss]": {
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
+```
+
+Keep both lines. `documentSelectors` is what actually registers the formatter; the `[tailwindcss]` block only picks Prettier when more than one formatter is available.
+
+To confirm it is live: open a `.css` file, run **Format Document With…** from the command palette, and check Prettier is offered. If the only option is "Configure Default Formatter", the selector is not matching.
 
 ## Key Packages
 

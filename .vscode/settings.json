@@ -2,7 +2,12 @@
 	"files.associations": {
 		"*.css": "tailwindcss"
 	},
+	"prettier.documentSelectors": ["**/*.css"],
 	"[svelte]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	"[tailwindcss]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	}
 }

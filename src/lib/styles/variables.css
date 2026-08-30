@@ -16,4 +16,19 @@
 	--color-secondary: #ffbe00;
 	--color-locked: #141414;
 	--color-dark-bg: #1e1e1e;
+
+	/* Reference palette — cream paper, amber track. Registered here rather than in a
+	   page's <style> block so they compile to real utilities: bg-paper, border-edge,
+	   text-muted, stroke-track-active, and so on. */
+	--color-paper: #f8efd2;
+	--color-surface: #fffdf6;
+	--color-well: #f6ebc6;
+	--color-edge: #e9ddb6;
+	--color-ink: #2a2621;
+	--color-muted: #8a8069;
+	--color-accent: #e0932a;
+	--color-track: #ecdcb2;
+	--color-track-active: #f0be5e;
+	--color-thumb: #d2d2d2;
+	--color-thumb-ring: #6f6f6f;
 }
