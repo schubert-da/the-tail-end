@@ -8,6 +8,9 @@ node_modules
 /.svelte-kit
 /build
 
+# Exploration
+/artwork
+
 # OS
 .DS_Store
 Thumbs.db
