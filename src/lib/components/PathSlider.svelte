@@ -30,7 +30,7 @@
 		nearestLocal,
 		pointAt,
 		tangentAt
-	} from '$utils/path-tracker.js';
+	} from '$utils/pathTracker.js';
 
 	let {
 		/** SVG path data. Any valid `d` string; self-intersection is fine. */
