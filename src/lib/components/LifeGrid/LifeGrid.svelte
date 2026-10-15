@@ -1,6 +1,7 @@
 <script>
 	import PathSlider from '$components/PathSlider.svelte';
 	import { pathConfig } from './LifeGridPath.js';
+	import { calculateHorizontalProgress } from '$utils/pathUtils.js';
 
 	const MAX_CELL_WIDTH = 40;
 	const YEARS = 100;
@@ -11,7 +12,7 @@
 		height: 4396
 	});
 
-	let sliderConfig = $derived({
+	const sliderConfig = {
 		d: pathConfig.d,
 		viewbox: pathConfig.viewbox,
 		tolerance: 100,
@@ -20,16 +21,17 @@
 		monotonic: false,
 		rotateThumb: false,
 		disabled: false
-	});
+	};
 
 	let progress = $state(0);
 	let offPath = $state(false);
 	let dragging = $state(false);
+	let horizontalProgress = $state(0);
 
 	let screenHeight = $state(450);
 
-	function calculateGridTranslation(progress, gridHeight) {
-		let translation = progress * gridHeight;
+	function calculateGridTranslation(horizontalProgress, gridHeight) {
+		let translation = horizontalProgress * gridHeight;
 		// start moving the grid only after its scrolled down a certain amt of the page (otherwise it gets stuck at the top)
 		let effectiveTranslation =
 			translation < screenHeight * 0.25 ? 0 : translation - screenHeight * 0.25;
@@ -43,7 +45,7 @@
 <div class="life-grid-container relative w-full p-3 sm:p-5 lg:p-10">
 	<div
 		class="grid-content-track relative mx-auto w-fit"
-		style:translate={calculateGridTranslation(progress, gridDimensions.height)}
+		style:translate={calculateGridTranslation(horizontalProgress, gridDimensions.height)}
 	>
 		<div
 			class="life-grid gap-0.5 lg:gap-1"
@@ -74,6 +76,9 @@
 				monotonic={sliderConfig.monotonic}
 				rotateThumb={sliderConfig.rotateThumb}
 				disabled={sliderConfig.disabled}
+				onchange={(current) => {
+					horizontalProgress = calculateHorizontalProgress(current, pathConfig);
+				}}
 				label="Loop track progress"
 			/>
 		</div>
