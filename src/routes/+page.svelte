@@ -1,5 +1,5 @@
 <script>
-	import LifeGrid from '$lib/components/LifeGrid.svelte';
+	import LifeGrid from '$components/LifeGrid/LifeGrid.svelte';
 </script>
 
 <LifeGrid />
