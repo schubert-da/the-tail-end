@@ -33,8 +33,15 @@
 	function calculateGridTranslation(horizontalProgress, gridHeight) {
 		let translation = horizontalProgress * gridHeight;
 		// start moving the grid only after its scrolled down a certain amt of the page (otherwise it gets stuck at the top)
-		let effectiveTranslation =
-			translation < screenHeight * 0.25 ? 0 : translation - screenHeight * 0.25;
+		let effectiveTranslation = 0;
+
+		if (translation < screenHeight * 0.25) {
+			effectiveTranslation = 0;
+		} else if (translation > gridHeight - screenHeight * 0.5) {
+			effectiveTranslation = gridHeight - screenHeight * 0.75;
+		} else {
+			effectiveTranslation = translation - screenHeight * 0.25;
+		}
 
 		return `0 ${-effectiveTranslation}px`;
 	}
@@ -42,7 +49,7 @@
 
 <svelte:window bind:innerHeight={screenHeight} />
 
-<div class="life-grid-container relative w-full p-3 sm:p-5 lg:p-10">
+<div class="life-grid-container relative h-screen w-full p-3 sm:p-5 lg:p-10">
 	<div
 		class="grid-content-track relative mx-auto w-fit"
 		style:translate={calculateGridTranslation(horizontalProgress, gridDimensions.height)}
