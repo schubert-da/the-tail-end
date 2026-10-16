@@ -2,6 +2,7 @@
 	import PathSlider from '$components/PathSlider.svelte';
 	import { pathConfig } from './LifeGridPath.js';
 	import { calculateHorizontalProgress } from '$utils/pathUtils.js';
+	import { Spring } from 'svelte/motion';
 
 	const MAX_CELL_WIDTH = 40;
 	const YEARS = 100;
@@ -15,7 +16,7 @@
 	const sliderConfig = {
 		d: pathConfig.d,
 		viewbox: pathConfig.viewbox,
-		tolerance: 100,
+		tolerance: 5000,
 		strokeWidth: 10,
 		thumbRadius: 30,
 		monotonic: false,
@@ -27,11 +28,14 @@
 	let offPath = $state(false);
 	let dragging = $state(false);
 	let horizontalProgress = $state(0);
+	let smoothedHorizontalProgress = Spring.of(() => horizontalProgress, {
+		stiffness: 0.15,
+		damping: 0.2
+	});
 
 	let screenHeight = $state(450);
-
-	function calculateGridTranslation(horizontalProgress, gridHeight) {
-		let translation = horizontalProgress * gridHeight;
+	function calculateGridTranslation(smoothedHorizontalProgress, gridHeight) {
+		let translation = smoothedHorizontalProgress * gridHeight;
 		// start moving the grid only after its scrolled down a certain amt of the page (otherwise it gets stuck at the top)
 		let effectiveTranslation = 0;
 
@@ -52,7 +56,10 @@
 <div class="life-grid-container relative h-screen w-full p-3 sm:p-5 lg:p-10">
 	<div
 		class="grid-content-track relative mx-auto w-fit"
-		style:translate={calculateGridTranslation(horizontalProgress, gridDimensions.height)}
+		style:translate={calculateGridTranslation(
+			smoothedHorizontalProgress.current,
+			gridDimensions.height
+		)}
 	>
 		<div
 			class="life-grid gap-0.5 lg:gap-1"
