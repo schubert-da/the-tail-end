@@ -30,10 +30,11 @@
 	let horizontalProgress = $state(0);
 	let smoothedHorizontalProgress = Spring.of(() => horizontalProgress, {
 		stiffness: 0.15,
-		damping: 0.2
+		damping: 0.8
 	});
 
 	let screenHeight = $state(450);
+	let pixelRatio = $state(1);
 	function calculateGridTranslation(smoothedHorizontalProgress, gridHeight) {
 		let translation = smoothedHorizontalProgress * gridHeight;
 		// start moving the grid only after its scrolled down a certain amt of the page (otherwise it gets stuck at the top)
@@ -47,11 +48,13 @@
 			effectiveTranslation = translation - screenHeight * 0.25;
 		}
 
-		return `0 ${-effectiveTranslation}px`;
+		// snap to whole device pixels so cell edges don't re-antialias every frame
+		const snapped = Math.round(effectiveTranslation * pixelRatio) / pixelRatio;
+		return `0 ${-snapped}px`;
 	}
 </script>
 
-<svelte:window bind:innerHeight={screenHeight} />
+<svelte:window bind:innerHeight={screenHeight} bind:devicePixelRatio={pixelRatio} />
 
 <div class="life-grid-container relative h-screen w-full p-3 sm:p-5 lg:p-10">
 	<div
@@ -69,7 +72,10 @@
 			bind:clientHeight={gridDimensions.height}
 		>
 			{#each Array(YEARS * NUM_COLS) as _, i}
-				<div class="life-cell aspect-square w-full bg-gray-400"></div>
+				<div
+					class:highlighted={i < progress * YEARS * NUM_COLS}
+					class="life-cell aspect-square w-full bg-gray-400"
+				></div>
 			{/each}
 		</div>
 
@@ -103,5 +109,17 @@
 	.life-grid {
 		display: grid;
 		grid-template-columns: repeat(var(--num-cols), minmax(0, var(--cell-width)));
+	}
+
+	.grid-content-track {
+		will-change: transform;
+	}
+
+	.life-cell {
+		transition: background-color 0.6s ease;
+	}
+
+	.life-cell.highlighted {
+		background-color: #555;
 	}
 </style>
