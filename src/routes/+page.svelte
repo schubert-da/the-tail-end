@@ -3,5 +3,7 @@
 	import LifeGridCanvas from '$components/LifeGrid/LifeGridCanvas.svelte';
 </script>
 
-<!-- <LifeGrid /> -->
-<LifeGridCanvas />
+<main>
+	<!-- <LifeGrid /> -->
+	<LifeGridCanvas />
+</main>
